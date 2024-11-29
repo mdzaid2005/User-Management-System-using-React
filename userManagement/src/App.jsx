@@ -9,7 +9,7 @@ const App = () => {
   return (
     <Router>
       <div className="navbar">
-        <Link to="/" className="nav-link">Dashboard</Link>
+        <Link to="/" className="nav-link">List</Link>
         <Link to="/add" className="nav-link">Add User</Link>
       </div>
       <Routes>
