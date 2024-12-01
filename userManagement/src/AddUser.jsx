@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./AddUser.css";
 
-import "./AddUser.css"
+import axios from "axios";
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -16,14 +17,12 @@ const AddUser = () => {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
 
- 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const validatePhone = (phone) => {
-
     const phoneRegex = /^\+91[0-9]{10}$/;
     return phoneRegex.test(phone);
   };
@@ -45,34 +44,35 @@ const AddUser = () => {
     e.preventDefault();
 
     const newErrors = {};
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required.";
+    }
     if (!validateEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
     if (!validatePhone(formData.phone)) {
       newErrors.phone = "Please enter a valid phone number with +91 prefix.";
     }
+    if (!formData.role) {
+      newErrors.role = "Role is required.";
+    }
+    if (!formData.status) {
+      newErrors.status = "Status is required.";
+    }
 
-   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://673612775995834c8a954fe2.mockapi.io/api/v1/tasks",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+        formData
       );
 
-      if (response.ok) {
+      if (response.status === 201) {
         setMessage("User created successfully!");
-        navigate("/");
         setFormData({
           name: "",
           email: "",
@@ -80,6 +80,7 @@ const AddUser = () => {
           role: "",
           status: "",
         });
+        navigate("/");
       } else {
         throw new Error("Failed to create user.");
       }
@@ -102,6 +103,7 @@ const AddUser = () => {
             onChange={handleChange}
             required
           />
+          {errors.name && <p className="error">{errors.name}</p>}
         </div>
         <div className="form-group">
           <label>Email:</label>
@@ -138,6 +140,7 @@ const AddUser = () => {
             <option value="User">User</option>
             <option value="Editor">Editor</option>
           </select>
+          {errors.role && <p className="error">{errors.role}</p>}
         </div>
         <div className="form-group">
           <label>Status:</label>
@@ -151,6 +154,7 @@ const AddUser = () => {
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
+          {errors.status && <p className="error">{errors.status}</p>}
         </div>
         <button type="submit" className="submit-button">
           Submit

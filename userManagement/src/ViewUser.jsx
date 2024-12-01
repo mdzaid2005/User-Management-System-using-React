@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+
+import axios from "axios";
+
 const ViewUser = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
@@ -10,9 +13,8 @@ const ViewUser = () => {
   }, []);
 
   const fetchUser = async () => {
-    const response = await fetch(`https://673612775995834c8a954fe2.mockapi.io/api/v1/tasks/${id}`);
-    const data = await response.json();
-    setUser(data);
+    const response = await axios.get(`https://673612775995834c8a954fe2.mockapi.io/api/v1/tasks/${id}`);
+    setUser(response.data);
   };
 
   return (
